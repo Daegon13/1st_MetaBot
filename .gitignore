@@ -1,0 +1,27 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# Build / TypeScript
+dist/
+*.tsbuildinfo
+
+# Entornos y secretos
+.env
+.env.*
+!.env.example
+
+# Prisma
+prisma/*.db
+prisma/*-journal
+prisma/migrations/*/steps.json
+
+# Firebase
+serviceAccount*.json
+
+# Logs / OS
+logs/
+*.log
+.DS_Store

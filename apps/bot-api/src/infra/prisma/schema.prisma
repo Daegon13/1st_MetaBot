@@ -1,0 +1,58 @@
+// Cada bloque de código incluye comentarios para su función
+// 1) Fuente de datos y generador
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 2) Cliente (empresa/tenant)
+model Client {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  // Configuraciones del bot por cliente
+  welcomeText  String?
+  businessHours Json?   // ventanas de atención, mensajes fuera de hora
+  // Accesos y credenciales por tenant si aplica
+  metaPhoneNumberId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relaciones
+  kbEntries    KBEntry[]
+  contacts     Contact[]
+}
+
+// 3) Conocimiento base (RAG)
+model KBEntry {
+  id        String   @id @default(cuid())
+  clientId  String
+  title     String
+  content   String   // texto plano ya limpiado
+  // metadatos
+  tags      String[]
+  // opcional: ids para vector store externo
+  vectorId  String?
+
+  client    Client   @relation(fields: [clientId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+// 4) Contacto de WhatsApp mapeado a cliente
+model Contact {
+  id            String   @id @default(cuid())
+  clientId      String
+  waPhone       String   // número en formato E.164
+  name          String?
+  lastIntent    String?
+  lastMessageAt DateTime?
+  state         Json?    // estado conversacional (slots)
+
+  client        Client   @relation(fields: [clientId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
