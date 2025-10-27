@@ -1,3 +1,4 @@
+// src/app.ts
 import express from 'express';
 import cors from 'cors';
 import { errorHandler } from './middlewares/errorHandler';
@@ -12,6 +13,7 @@ export function createApp() {
   app.use('/webhook/instagram', instagramRouter);
   app.use('/admin', adminRouter);
 
+  // debe ir al final
   app.use(errorHandler);
   return app;
 }

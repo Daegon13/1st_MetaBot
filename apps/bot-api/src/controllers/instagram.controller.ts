@@ -1,10 +1,9 @@
-// Lógica para validar el challenge y procesar mensajes de Instagram (Messenger API for Instagram)
-import { Request, Response } from 'express';
+// src/controllers/instagram.controller.ts
+import type { Request, Response } from 'express';
 import { dialogService } from '../services/dialog.service';
 import { z } from 'zod';
 
 export function verifyWebhook(req: Request, res: Response) {
-  // Meta envía hub.mode, hub.verify_token y hub.challenge
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
@@ -15,24 +14,22 @@ export function verifyWebhook(req: Request, res: Response) {
   return res.sendStatus(403);
 }
 
-// Esquema del webhook de Instagram Messaging (Messenger Platform):
-// object: 'page' | entry[] | entry.messaging[] con sender.id, message.text, etc.
 const InstagramEventSchema = z.object({
   object: z.string(),
   entry: z.array(z.object({
-    id: z.string(), // page id
+    id: z.string(),
     time: z.number().optional(),
     messaging: z.array(z.object({
-      sender: z.object({ id: z.string() }), // IGSID (Instagram Scoped User ID)
-      recipient: z.object({ id: z.string() }), // PAGE_ID
+      sender: z.object({ id: z.string() }),
+      recipient: z.object({ id: z.string() }),
       timestamp: z.number().optional(),
       message: z.object({
         mid: z.string().optional(),
-        text: z.string().optional()
+        text: z.string().optional(),
       }).optional(),
-      postback: z.any().optional()
-    })).optional()
-  }))
+      postback: z.any().optional(),
+    })).optional(),
+  })),
 });
 
 export async function onWebhookEvent(req: Request, res: Response) {
@@ -44,18 +41,16 @@ export async function onWebhookEvent(req: Request, res: Response) {
     for (const m of events) {
       if (m.message?.text) {
         await dialogService.handleInbound({
-          fromIg: m.sender.id,              // IGSID del usuario
+          fromIg: m.sender.id,
           text: m.message.text,
-          clientSlug: inferClientFromPage(entry.id) // mapear tenant por PAGE_ID
+          clientSlug: inferClientFromPage(entry.id),
         });
       }
     }
   }
-
   return res.sendStatus(200);
 }
 
-function inferClientFromPage(pageId: string): string {
-  // Si usas una Página por cliente, mapea PAGE_ID -> slug del tenant
+function inferClientFromPage(_pageId: string): string {
   return 'cliente-ejemplo';
 }
