@@ -1,35 +1,30 @@
 {
-  "name": "1st_metabot",
-  "version": "1.0.0",
-  "description": "Bot de instagram para soporte de servicio al cliente",
-  "main": "index.js",
+  "name": "bot-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p .",
+    "start": "node dist/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Daegon13/1st_MetaBot.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Daegon13/1st_MetaBot/issues"
-  },
-  "homepage": "https://github.com/Daegon13/1st_MetaBot#readme",
   "dependencies": {
-    "@prisma/client": "^6.18.0",
-    "express": "^5.1.0",
-    "firebase-admin": "^13.5.0",
+    "@prisma/client": "^5.20.0",
+    "express": "^4.19.2",
     "node-fetch": "^3.3.2",
-    "openai": "^6.7.0",
-    "prisma": "^6.18.0",
-    "zod": "^4.1.12"
+    "openai": "^4.58.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/express": "^5.0.4",
-    "@types/node": "^24.9.1",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.3"
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12",
+    "prisma": "^5.20.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.6.3"
   }
 }
