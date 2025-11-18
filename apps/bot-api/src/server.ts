@@ -1,4 +1,4 @@
-// Inicia el servidor en el puerto definido
+import 'dotenv/config';
 import { createApp } from './app';
 
 const PORT = process.env.PORT ?? 3000;

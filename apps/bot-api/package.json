@@ -14,8 +14,9 @@
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
-    "cors": "^2.8.5",
     "@prisma/client": "^5.22.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^4.19.2",
     "node-fetch": "^3.3.2",
     "openai": "^4.59.0",
