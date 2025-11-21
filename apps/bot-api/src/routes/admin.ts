@@ -25,8 +25,14 @@ router.post('/kb/:slug', async (req, res) => {
 
   const created = [];
   for (const e of entries) {
-    const kb = await prisma.kbEntry.create({
-      data: { clientId: client.id, title: e.title, content: e.content, tags: e.tags ?? [] }
+    // Creamos una entrada nueva en la base de conocimiento para este cliente
+      const kb = await prisma.kBEntry.create({
+        data: {
+        clientId: client.id,
+        title: e.title,
+        content: e.content,
+        tags: e.tags ?? []
+       }
     });
     created.push(kb);
     // TODO: vectorStore.upsert({ id: kb.id, content: kb.content, clientId: client.id })

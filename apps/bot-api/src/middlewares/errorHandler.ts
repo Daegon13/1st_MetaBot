@@ -2,22 +2,35 @@
 import type { Request, Response, NextFunction } from 'express';
 
 /**
- * Middleware de manejo de errores (último en la cadena)
- * Devuelve JSON consistente y evita crasheos por errores no controlados
+ * Middleware de manejo de errores (último en la cadena).
+ * Devuelve JSON consistente y evita crasheos por errores no controlados.
  */
 export function errorHandler(
   err: unknown,
-  req: Request,
+  _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) {
-  // Log mínimo (puedes reemplazar por pino/winston)
+  // Log mínimo (puedes reemplazar por pino/winston en producción)
   console.error('[error]', err);
 
-  const status =
-    typeof err === 'object' && err && 'status' in err && typeof (err as any).status === 'number'
-      ? (err as any).status
-      : 500;
+  // Por defecto, error interno
+  let status = 500;
+
+  // Permitimos que ciertos errores traigan su propio status (p.ej. errores de dominio)
+  if (typeof err === 'object' && err !== null && 'status' in err) {
+    const maybeStatus = (err as any).status;
+    if (typeof maybeStatus === 'number') {
+      status = maybeStatus;
+    }
+  }
+
+  // Errores de validación (por ejemplo zod) -> 400
+  if (typeof err === 'object' && err !== null && 'name' in err) {
+    if ((err as any).name === 'ZodError') {
+      status = 400;
+    }
+  }
 
   const message =
     typeof err === 'object' && err && 'message' in err
@@ -28,7 +41,7 @@ export function errorHandler(
     ok: false,
     error: {
       message,
-      // agrega un code si lo manejas en tu dominio
+      // aquí podrías incluir un "code" para distinguir tipos de error desde el frontend
     },
   });
 }
